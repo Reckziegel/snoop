@@ -4,10 +4,9 @@ Title: Portfolio Construction within the Tidyverse
 Version: 0.1.0
 Author: Bernardo Reckziegel
 Maintainer: Bernardo Reckziegel <bernardo_cse@hotmail.com> 
-Description: Portfolio optimization with the tidyverse.
+Description: Portfolio optimization within the tidyverse.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports: 
     assertthat,
     cccp,
