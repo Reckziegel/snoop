@@ -69,7 +69,6 @@ mean_variance <- function(.moments, .wmin = 0, .wmax = 1) {
   Amat <- rbind(Aeq, A)
   bvec <- c(beq, b)
 
-  weights <- quadprog::solve.QP(Dmat = 2 * .sigma, dvec = .mu, Amat = t(Amat), bvec = bvec, meq = length(beq))$solution
-  weights
+  quadprog::solve.QP(Dmat = 2 * .sigma, dvec = .mu, Amat = t(Amat), bvec = bvec, meq = length(beq))
 
 }

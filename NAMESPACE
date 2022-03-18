@@ -2,4 +2,5 @@
 
 export(construct_rebalance_infrastructure)
 export(construct_rolling_infrastructure)
+export(extract_statistics)
 export(rebalance_portfolio)

@@ -18,7 +18,8 @@ rebalance_portfolio(
 
 \item{...}{Additional arguments to be passed to \code{.fn}.}
 
-\item{.strategy}{A \code{character} with the optimization technique to be implemented.}
+\item{.strategy}{A \code{character} with the optimization technique to be implemented.
+Currently one of: \code{risk_parity} or \code{mean_variance}.}
 }
 \value{
 A \code{tibble}.

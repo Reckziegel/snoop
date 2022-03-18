@@ -3,6 +3,7 @@
 #' @param .data A tabular (non-tidy) \code{tibble}.
 #' @param .fn A function to compute the optimization strategy
 #' @param .strategy A \code{character} with the optimization technique to be implemented.
+#' Currently one of: \code{risk_parity} or \code{mean_variance}.
 #' @param ... Additional arguments to be passed to \code{.fn}.
 #'
 #' @return A \code{tibble}.
@@ -48,7 +49,7 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
             .p    = .data$.flag,
             .f    = .fn,
             .else = as.null),
-          .weights = purrr::map_if(
+          .optimization = purrr::map_if(
             .x = .data$.cov,
             .p = .data$.flag,
             .f = risk_parity,
@@ -56,11 +57,11 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
         )
 
       tmp$.cov[[1]]     <- .fn(tmp$.analysis[[1]])
-      tmp$.weights[[1]] <- risk_parity(tmp$.cov[[1]])
+      tmp$.optimization[[1]] <- risk_parity(tmp$.cov[[1]])
 
       for (i in 2:NROW(tmp)) {
-        if (is.null(tmp$.weights[[i]])) {
-          tmp$.weights[[i]] <- tmp$.weights[[i - 1]]
+        if (is.null(tmp$.optimization[[i]])) {
+          tmp$.optimization[[i]] <- tmp$.optimization[[i - 1]]
         }
       }
 
@@ -73,19 +74,19 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
             .p    = .data$.flag,
             .f    = .fn,
             .else = as.null),
-          .weights = purrr::map_if(
-            .x = .data$.moment,
-            .p = .data$.flag,
-            .f = ~ mean_variance(.moments = .x, .wmin = 0, .wmax = 1),
-            .else = as.null)
+          .optimization = purrr::map_if(
+            .x          = .data$.moment,
+            .p          = .data$.flag,
+            .f          = ~ mean_variance(.moments = .x, .wmin = 0, .wmax = 1),
+            .else       = as.null)
         )
 
       tmp$.moment[[1]]  <- .fn(tmp$.analysis[[1]])
-      tmp$.weights[[1]] <- mean_variance(tmp$.moment[[1]], .wmin = 0, .wmax = 1)
+      tmp$.optimization[[1]] <- mean_variance(tmp$.moment[[1]], .wmin = 0, .wmax = 1)
 
       for (i in 2:NROW(tmp)) {
-        if (is.null(tmp$.weights[[i]])) {
-          tmp$.weights[[i]] <- tmp$.weights[[i - 1]]
+        if (is.null(tmp$.optimization[[i]])) {
+          tmp$.optimization[[i]] <- tmp$.optimization[[i - 1]]
         }
       }
 
@@ -101,6 +102,6 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
   }
 
   tmp |>
-    dplyr::select(.data$.date:.data$.assessment, .data$.weights)
+    dplyr::select(.data$.date:.data$.assessment, .data$.optimization)
 
 }
