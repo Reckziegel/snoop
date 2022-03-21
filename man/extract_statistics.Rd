@@ -10,7 +10,8 @@ extract_statistics(.data)
 \item{.data}{A \code{tibble} from the \code{snoop_rolling}.}
 }
 \value{
-A \code{tibble} with 3 new columns: \code{.weights}, \code{.return} and \code{.volatility}.
+A \code{tibble} with 7 new columns: \code{.weights}, \code{.return} and \code{.volatility},
+\code{.skewness} and \code{.kurtosis}, \code{.value_at_risk} and \code{.expected_shortfall}.
 }
 \description{
 Computes the portfolio statistics for each period being considered.

@@ -49,3 +49,134 @@ get_index_char <- function(.data) {
 get_index_quo <- function(.data, .index = get_index_char(.data)) {
   rlang::quo(.index)
 }
+
+
+# Kurtosis ----------------------------------------------------------------
+
+
+#' Kurtosis of a Time-series
+#'
+#' This function computes the kurtosis of a given data set. It was written for
+#' internal computations.
+#'
+#' The method can be either \code{"moment"}, \code{"fisher"}, or \code{"excess"}.
+#'
+#' @param .invariant An univariate or multivariate time series.
+#' @param .method A \code{character} string. One of: \code{"excess"}, \code{"moment"} or \code{"fisher"}.
+#' @param .na_rm A \code{logical} value. Should missing values be removed? The default is \code{FALSE}.
+#'
+#' @return A tidy \code{tibble} with 2 columns.
+#'
+#' @keywords internal
+kurtosis <- function(.invariant, .method = c("excess", "moment", "fisher"), .na_rm = FALSE) {
+
+  method <- match.arg(.method, choices = c("excess", "moment", "fisher"))
+  assertthat::assert_that(assertthat::is.flag(.na_rm))
+
+
+  if (!('tbl' %in% class(.invariant))) {
+    .invariant <- tibble::as_tibble(.invariant)
+  }
+
+  # if none is numeric, abort
+  if (all(!purrr::map_lgl(.invariant, is.numeric))) {
+    rlang::abort('At least one column must be numeric.')
+  }
+
+  # Remove NAs:
+  if (.na_rm) {
+    .invariant <- stats::na.omit(.invariant)
+  }
+
+  # Methods
+  if (method == "excess") {
+
+    kurtosis <- purrr::map_dbl(
+      .x = .invariant,
+      .f = ~ sum((.x - mean(.x)) ^ 4 / as.numeric(stats::var(.x)) ^ 2) / length(.x) - 3
+    )
+
+  } else if (method == "moment") {
+
+    kurtosis <- purrr::map_dbl(
+      .x = .invariant,
+      .f = ~ sum((.x - mean(.x)) ^ 4 / as.numeric(stats::var(.x))  ^ 2) / length(.x)
+    )
+
+  } else if (method == "fisher") {
+    n <- NROW(.invariant)
+    kurtosis <- purrr::map_dbl(
+      .x = .invariant,
+      .f = ~ ((n + 1) * (n - 1) * ((sum(.x ^ 4) / n) / (sum(.x ^ 2) / n) ^ 2 - (3 * (n - 1)) / (n + 1))) / ((n - 2) * (n - 3))
+    )
+
+  }
+
+  kurtosis
+
+}
+
+
+
+
+# Skewness ----------------------------------------------------------------
+
+#' Skewness of a Time-series
+#'
+#' This function computes the kurtosis of a given data set. It was written for
+#' internal computations.
+#'
+#' @inheritParams kurtosis
+#'
+#' @return A tidy \code{tibble} with 2 columns.
+#'
+#' @keywords internal
+skewness <- function(.invariant, .method = c("moment", "fisher"), .na_rm = FALSE) {
+
+  method <- match.arg(.method, choices = c("moment", "fisher"))
+  assertthat::assert_that(assertthat::is.flag(.na_rm))
+
+  if (!('tbl' %in% class(.invariant))) {
+    .invariant <- tibble::as_tibble(.invariant)
+  }
+
+  # # if none is numeric, abort
+  # if (all(!purrr::map_lgl(.invariant, is.numeric))) {
+  #   stop('At least one column must be numeric', call. = FALSE)
+  # }
+
+  # Remove NAs:
+  if (.na_rm) {
+    .invariant <- stats::na.omit(.invariant)
+  }
+
+  # Skewness:
+  n <- NROW(.invariant)
+
+  # Selected Method:
+  if (method == "moment") {
+
+    skewness <- purrr::map_dbl(
+      .x = .invariant,
+      .f = ~ sum((.x - mean(.x)) ^ 3 / sqrt(as.numeric(stats::var(.x))) ^ 3) / length(.x)
+    )
+
+  } else if (method == "fisher") {
+
+    if (n < 3) {
+      skewness <- NA_real_
+    } else {
+      skewness <- purrr::map_dbl(
+        .x = .invariant,
+        .f = ~ ((sqrt(n  * (n - 1)) / (n - 2)) * (sum(.x ^ 3) / n)) / ((sum(.x ^ 2) / n) ^ (3  / 2))
+      )
+    }
+
+  }
+
+  skewness
+
+}
+
+#' @keywords internal
+es <- function(.data, .level = 0.05) mean(.data[.data <= stats::quantile(.data, .level)])

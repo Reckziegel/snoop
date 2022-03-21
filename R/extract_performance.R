@@ -4,7 +4,8 @@
 #'
 #' @param .data A \code{tibble} from the \code{snoop_rolling}.
 #'
-#' @return A \code{tibble} with 3 new columns: \code{.weights}, \code{.return} and \code{.volatility}.
+#' @return A \code{tibble} with 7 new columns: \code{.weights}, \code{.return} and \code{.volatility},
+#' \code{.skewness} and \code{.kurtosis}, \code{.value_at_risk} and \code{.expected_shortfall}.
 #'
 #' @export
 #'
@@ -32,14 +33,22 @@ extract_statistics <- function(.data) {
 
   if (inherits(.data, "snoop_rolling")) {
 
-    .data |>
-      dplyr::mutate(
-        .weights    = purrr::map(.x = .data$.optimization, .f = "solution"),
-        .var        = purrr::map(.x = .data$.analysis, .f = stats::var),
-        .return     = purrr::map2_dbl(.x = .data$.assessment, .y = .data$.weights, .f = ~ as.matrix(.x) %*% as.matrix(.y)),
-        .volatility = purrr::map2_dbl(.x = .data$.weights,    .y = .data$.var, .f = ~ sqrt(.x %*% .y %*% .x))
-      ) |>
-      dplyr::select(-.data$.var)
+    suppressMessages(
+      suppressWarnings(
+        .data |>
+          dplyr::mutate(
+            .weights    = purrr::map(.x = .data$.optimization, .f = "solution"),
+            .var        = purrr::map(.x = .data$.analysis, .f = stats::var),
+            .return     = purrr::map2_dbl(.x = .data$.assessment, .y = .data$.weights, .f = ~ as.matrix(.x) %*% as.matrix(.y)),
+            .volatility = purrr::map2_dbl(.x = .data$.weights, .y = .data$.var, .f = ~ sqrt(.x %*% .y %*% .x)),
+            .skewness   = purrr::map2_dbl(.x = .data$.analysis, .y = .data$.weights, .f = ~ skewness(as.matrix(.x) %*% .y)),
+            .kurtosis   = purrr::map2_dbl(.x = .data$.analysis, .y = .data$.weights, .f = ~ kurtosis(as.matrix(.x) %*% .y)),
+            .value_at_risk = purrr::map2_dbl(.x = .data$.analysis, .y = .data$.weights, .f = ~ stats::quantile(as.matrix(.x) %*% .y, 0.05)),
+            .expected_shortfall = purrr::map2_dbl(.x = .data$.analysis, .y = .data$.weights, .f = ~ es(as.matrix(.x) %*% .y, 0.05))
+          ) |>
+          dplyr::select(-.data$.var)
+      )
+    )
 
   } else {
 

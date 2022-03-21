@@ -30,9 +30,9 @@ A Rebalance Structure
 \examples{
 stocks <- tibble::tibble(
   time = as.Date('2009-01-01') + 0:99,
-  X    = rnorm(100, 0, 1),
-  Y    = rnorm(100, 0, 2),
-  Z    = rnorm(100, 0, 4)
+  X    = stats::rnorm(100, 0, 1),
+  Y    = stats::rnorm(100, 0, 2),
+  Z    = stats::rnorm(100, 0, 4)
 )
 
 roll <- construct_rolling_infrastructure(stocks, .initial = 50)
