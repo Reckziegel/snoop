@@ -47,7 +47,7 @@ mu_sigma <- function(.data) {
 rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
 
 # Risk Parity Strategy
-compute_cov <- function(.data) stats::cov(as.matrix(.data))
+#compute_cov <- function(.data) stats::cov(as.matrix(.data))
 
-rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
+#rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
 }

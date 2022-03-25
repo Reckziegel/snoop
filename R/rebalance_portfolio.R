@@ -29,9 +29,9 @@
 #' rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
 #'
 #' # Risk Parity Strategy
-#' compute_cov <- function(.data) stats::cov(as.matrix(.data))
+#' #compute_cov <- function(.data) stats::cov(as.matrix(.data))
 #'
-#' rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
+#' #rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
 rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "mean_variance")) {
 
   .strategy <- rlang::arg_match(.strategy, c("risk_parity", "mean_variance"))
@@ -41,6 +41,8 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
 
     # segment code by strategy
     if (.strategy == "risk_parity") {
+
+      rlang::abort("`risk_parity` was not implemented yet. Wait for the future development version of this package.")
 
       tmp <- attributes(.data)$anexo |>
         dplyr::mutate(
