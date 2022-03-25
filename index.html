@@ -69,6 +69,8 @@
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
 </h2>
+<p><code>snoop</code> aims to automate routines for portfolio construction purposes inside the <code>tiyverse</code>.</p>
+<p>The current workflow is the following:</p>
 <ol style="list-style-type: decimal">
 <li>Build a rolling <code>tibble</code> with <code><a href="reference/construct_rolling_infrastructure.html">construct_rolling_infrastructure()</a></code>
 </li>
@@ -89,36 +91,86 @@
 <span class="co"># Step 0: Get the data</span>
 <span class="va">stocks</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">'2009-01-01'</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">99</span>,
- X    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
- Y    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
- Z    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span>
+ X    <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+ Y    <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,
+ Z    <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="co"># Step 1: Rolling Infraestructure</span>
 <span class="va">roll</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/construct_rolling_infrastructure.html">construct_rolling_infrastructure</a></span><span class="op">(</span><span class="va">stocks</span>, .initial <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
+<span class="va">roll</span>
+<span class="co">#&gt; # A tibble: 50 x 3</span>
+<span class="co">#&gt;    .date      .analysis         .assessment     </span>
+<span class="co">#&gt;    &lt;date&gt;     &lt;list&gt;            &lt;list&gt;          </span>
+<span class="co">#&gt;  1 2009-02-20 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  2 2009-02-21 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  3 2009-02-22 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  4 2009-02-23 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  5 2009-02-24 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  6 2009-02-25 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  7 2009-02-26 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  8 2009-02-27 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  9 2009-02-28 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt; 10 2009-03-01 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt; # ... with 40 more rows</span>
 
 <span class="co"># Step 2: Rebalance Infraestructure</span>
-<span class="va">rebal</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/construct_rebalance_infrastructure.html">construct_rebalance_infrastructure</a></span><span class="op">(</span><span class="va">roll</span><span class="op">)</span>
+<span class="va">rebal</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/construct_rebalance_infrastructure.html">construct_rebalance_infrastructure</a></span><span class="op">(</span><span class="va">roll</span>, .by <span class="op">=</span> <span class="st">"week"</span><span class="op">)</span>
+<span class="va">rebal</span> <span class="co"># information is under the hood</span>
+<span class="co">#&gt; # A tibble: 50 x 3</span>
+<span class="co">#&gt;    .date      .analysis         .assessment     </span>
+<span class="co">#&gt;    &lt;date&gt;     &lt;list&gt;            &lt;list&gt;          </span>
+<span class="co">#&gt;  1 2009-02-20 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  2 2009-02-21 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  3 2009-02-22 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  4 2009-02-23 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  5 2009-02-24 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  6 2009-02-25 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  7 2009-02-26 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  8 2009-02-27 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt;  9 2009-02-28 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt; 10 2009-03-01 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt;</span>
+<span class="co">#&gt; # ... with 40 more rows</span>
 
 <span class="co"># Step 3: Rebalance Portfolio</span>
-<span class="va">mu_sigma</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, sigma <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span><span class="op">)</span> <span class="co"># Mean Variance Strategy</span>
+<span class="va">mu_sigma</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span> <span class="op">{</span>
+  <span class="co"># Mean Variance Strategy</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span>, sigma <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span><span class="op">)</span> 
+<span class="op">}</span>
+
+<span class="co"># Step 4: Compute the main statistics</span>
 <span class="va">optimal</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/rebalance_portfolio.html">rebalance_portfolio</a></span><span class="op">(</span><span class="va">rebal</span>, <span class="va">mu_sigma</span>, .strategy <span class="op">=</span> <span class="st">"mean_variance"</span><span class="op">)</span>
+<span class="va">optimal</span>
+<span class="co">#&gt; # A tibble: 50 x 4</span>
+<span class="co">#&gt;    .date      .analysis         .assessment      .optimization   </span>
+<span class="co">#&gt;    &lt;date&gt;     &lt;list&gt;            &lt;list&gt;           &lt;list&gt;          </span>
+<span class="co">#&gt;  1 2009-02-20 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  2 2009-02-21 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  3 2009-02-22 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  4 2009-02-23 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  5 2009-02-24 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  6 2009-02-25 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  7 2009-02-26 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  8 2009-02-27 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt;  9 2009-02-28 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt; 10 2009-03-01 &lt;tibble [50 x 3]&gt; &lt;tibble [1 x 3]&gt; &lt;named list [6]&gt;</span>
+<span class="co">#&gt; # ... with 40 more rows</span>
 
 <span class="co"># Step 4: Compute Statistics</span>
 <span class="fu"><a href="reference/extract_statistics.html">extract_statistics</a></span><span class="op">(</span><span class="va">optimal</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 50 x 11</span>
 <span class="co">#&gt;    .date      .analysis .assessment .optimization .weights  .return .volatility</span>
 <span class="co">#&gt;    &lt;date&gt;     &lt;list&gt;    &lt;list&gt;      &lt;list&gt;        &lt;list&gt;      &lt;dbl&gt;       &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 2009-02-20 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -1.86         0.818</span>
-<span class="co">#&gt;  2 2009-02-21 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -0.667        0.842</span>
-<span class="co">#&gt;  3 2009-02-22 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -0.340        0.840</span>
-<span class="co">#&gt;  4 2009-02-23 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -1.13         0.838</span>
-<span class="co">#&gt;  5 2009-02-24 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;  0.0556       0.845</span>
-<span class="co">#&gt;  6 2009-02-25 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;  0.876        0.843</span>
-<span class="co">#&gt;  7 2009-02-26 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -0.681        0.856</span>
-<span class="co">#&gt;  8 2009-02-27 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -1.69         0.861</span>
-<span class="co">#&gt;  9 2009-02-28 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -0.504        0.883</span>
-<span class="co">#&gt; 10 2009-03-01 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt; -0.467        0.873</span>
+<span class="co">#&gt;  1 2009-02-20 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.181       0.965</span>
+<span class="co">#&gt;  2 2009-02-21 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.477       0.874</span>
+<span class="co">#&gt;  3 2009-02-22 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.384       0.878</span>
+<span class="co">#&gt;  4 2009-02-23 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.657       0.873</span>
+<span class="co">#&gt;  5 2009-02-24 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;  -0.245       0.872</span>
+<span class="co">#&gt;  6 2009-02-25 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.805       0.869</span>
+<span class="co">#&gt;  7 2009-02-26 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.929       0.853</span>
+<span class="co">#&gt;  8 2009-02-27 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.217       0.865</span>
+<span class="co">#&gt;  9 2009-02-28 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.549       0.865</span>
+<span class="co">#&gt; 10 2009-03-01 &lt;tibble&gt;  &lt;tibble&gt;    &lt;named list&gt;  &lt;dbl [3]&gt;   0.482       0.849</span>
 <span class="co">#&gt; # ... with 40 more rows, and 4 more variables: .skewness &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   .kurtosis &lt;dbl&gt;, .value_at_risk &lt;dbl&gt;, .expected_shortfall &lt;dbl&gt;</span></code></pre></div>
 </div>
