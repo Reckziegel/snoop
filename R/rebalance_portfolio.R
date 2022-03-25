@@ -91,14 +91,17 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
       }
 
     } else {
+
       rlang::abort("The chosen `.strategy` is currently not implemented.
                          Try `risk_parity` or `mean_variance` instead")
+
     }
 
 
-
   } else {
+
     rlang::abort("`.data` must be an object from the `snoop_rebalance` class.")
+
   }
 
   tmp |>
