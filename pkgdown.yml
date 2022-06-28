@@ -1,8 +1,8 @@
 pandoc: 2.7.3
-pkgdown: 2.0.2
+pkgdown: 2.0.5
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-03-25T22:34Z
+last_built: 2022-06-28T18:32Z
 urls:
   reference: https://reckziegel.github.io/snoop/reference
   article: https://reckziegel.github.io/snoop/articles
