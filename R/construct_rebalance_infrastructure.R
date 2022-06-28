@@ -32,12 +32,21 @@ construct_rebalance_infrastructure <- function(.data, .by = c("day", "week", "mo
   .index_col  <- get_index_col(.data)
   .index_char <- get_index_char(.data)
 
+  if (purrr::is_empty(.index_char)) {
+    rlang::abort(
+      message = "At least one column from the `.data` object must contain dates."
+    )
+  }
+
   att <- .data |>
-    dplyr::mutate(.day   = lubridate::day(.data[[.index_char]]),
-                  .week  = lubridate::week(.data[[.index_char]]),
-                  .month = lubridate::month(.data[[.index_char]]),
-                  .year  = lubridate::year(.data[[.index_char]]),
-                  .flag  = dplyr::if_else(.data[[paste0(".", .by)]] == dplyr::lag(.data[[paste0(".", .by)]]), FALSE, TRUE))
+    dplyr::mutate(
+      .day   = lubridate::day(.data[[.index_char]]),
+      .week  = lubridate::week(.data[[.index_char]]),
+      .month = lubridate::month(.data[[.index_char]]),
+      .year  = lubridate::year(.data[[.index_char]]),
+      .flag  = dplyr::if_else(.data[[paste0(".", .by)]] == dplyr::lag(.data[[paste0(".", .by)]]), FALSE, TRUE)
+      )
+
   att$.flag[[1]] <- FALSE
 
   tibble::new_tibble(x = .data, nrow = nrow(.data), class = "snoop_rebalance", anexo = att)

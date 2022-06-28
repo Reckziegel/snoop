@@ -27,6 +27,12 @@ construct_rolling_infrastructure <- function(.data, .initial = 252, .assess = 1,
   assertthat::assert_that(assertthat::is.number(.assess))
   assertthat::assert_that(assertthat::is.flag(.cumulative))
 
+  if (purrr::is_empty(get_index_char(.data))) {
+    rlang::abort(
+      message = "At least one column from the `.data` object must contain dates."
+    )
+  }
+
   roll <- rsample::rolling_origin(
     data       = .data,
     initial    = .initial,

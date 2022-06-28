@@ -74,5 +74,6 @@ optimal <- rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
 optimal
 
 # Step 4: Compute Statistics
-extract_statistics(optimal)
+metrics <- extract_statistics(optimal)
+metrics
 ```

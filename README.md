@@ -109,20 +109,21 @@ optimal
 #> # ... with 40 more rows
 
 # Step 4: Compute Statistics
-extract_statistics(optimal)
+metrics <- extract_statistics(optimal)
+metrics
 #> # A tibble: 50 x 11
 #>    .date      .analysis .assessment .optimization .weights  .return .volatility
 #>    <date>     <list>    <list>      <list>        <list>      <dbl>       <dbl>
-#>  1 2009-02-20 <tibble>  <tibble>    <named list>  <dbl [3]>   0.181       0.965
-#>  2 2009-02-21 <tibble>  <tibble>    <named list>  <dbl [3]>   0.477       0.874
-#>  3 2009-02-22 <tibble>  <tibble>    <named list>  <dbl [3]>   0.384       0.878
-#>  4 2009-02-23 <tibble>  <tibble>    <named list>  <dbl [3]>   0.657       0.873
-#>  5 2009-02-24 <tibble>  <tibble>    <named list>  <dbl [3]>  -0.245       0.872
-#>  6 2009-02-25 <tibble>  <tibble>    <named list>  <dbl [3]>   0.805       0.869
-#>  7 2009-02-26 <tibble>  <tibble>    <named list>  <dbl [3]>   0.929       0.853
-#>  8 2009-02-27 <tibble>  <tibble>    <named list>  <dbl [3]>   0.217       0.865
-#>  9 2009-02-28 <tibble>  <tibble>    <named list>  <dbl [3]>   0.549       0.865
-#> 10 2009-03-01 <tibble>  <tibble>    <named list>  <dbl [3]>   0.482       0.849
+#>  1 2009-02-20 <tibble>  <tibble>    <named list>  <dbl [3]> -0.969        0.861
+#>  2 2009-02-21 <tibble>  <tibble>    <named list>  <dbl [3]> -0.843        0.852
+#>  3 2009-02-22 <tibble>  <tibble>    <named list>  <dbl [3]> -0.146        0.858
+#>  4 2009-02-23 <tibble>  <tibble>    <named list>  <dbl [3]>  0.284        0.857
+#>  5 2009-02-24 <tibble>  <tibble>    <named list>  <dbl [3]> -0.713        0.852
+#>  6 2009-02-25 <tibble>  <tibble>    <named list>  <dbl [3]>  0.617        0.837
+#>  7 2009-02-26 <tibble>  <tibble>    <named list>  <dbl [3]> -0.387        0.813
+#>  8 2009-02-27 <tibble>  <tibble>    <named list>  <dbl [3]>  0.393        0.798
+#>  9 2009-02-28 <tibble>  <tibble>    <named list>  <dbl [3]>  0.0109       0.786
+#> 10 2009-03-01 <tibble>  <tibble>    <named list>  <dbl [3]>  1.96         0.785
 #> # ... with 40 more rows, and 4 more variables: .skewness <dbl>,
 #> #   .kurtosis <dbl>, .value_at_risk <dbl>, .expected_shortfall <dbl>
 ```

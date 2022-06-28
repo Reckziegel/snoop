@@ -37,6 +37,7 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
   .strategy <- rlang::arg_match(.strategy, c("risk_parity", "mean_variance"))
   .fn <- purrr::as_mapper(.fn, ...)
 
+
   if (inherits(.data, "snoop_rebalance")) {
 
     # segment code by strategy
@@ -58,10 +59,11 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
             .else = as.null)
         )
 
-      tmp$.cov[[1]]     <- .fn(tmp$.analysis[[1]])
+      tmp$.cov[[1]] <- .fn(tmp$.analysis[[1]])
       tmp$.optimization[[1]] <- risk_parity(tmp$.cov[[1]])
 
-      for (i in 2:NROW(tmp)) {
+      .n <- NROW(tmp)
+      for (i in 2:.n) {
         if (is.null(tmp$.optimization[[i]])) {
           tmp$.optimization[[i]] <- tmp$.optimization[[i - 1]]
         }
@@ -83,10 +85,11 @@ rebalance_portfolio <- function(.data, .fn, ..., .strategy = c("risk_parity", "m
             .else       = as.null)
         )
 
-      tmp$.moment[[1]]  <- .fn(tmp$.analysis[[1]])
+      tmp$.moment[[1]] <- .fn(tmp$.analysis[[1]])
       tmp$.optimization[[1]] <- mean_variance(tmp$.moment[[1]], .wmin = 0, .wmax = 1)
 
-      for (i in 2:NROW(tmp)) {
+      .n <- NROW(tmp)
+      for (i in 2:.n) {
         if (is.null(tmp$.optimization[[i]])) {
           tmp$.optimization[[i]] <- tmp$.optimization[[i - 1]]
         }
