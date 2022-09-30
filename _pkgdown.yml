@@ -1,4 +1,39 @@
 url: https://reckziegel.github.io/snoop/
 template:
   bootstrap: 5
+  bootswatch: litera
+
+reference:
+
+    - title: Objective Functions
+      contents:
+      - mean_variance
+      - minimum_variance
+      - risk_parity
+
+    - title: Constraint Functions
+      contents:
+      - constraint_budget
+      - constraint_bounds
+      - constraint_box
+      - constraint_cardinality
+      - constraint_turnover
+
+    - title: A Framework for BackTesting
+      contents:
+      - construct_rolling_infrastructure
+      - construct_rebalance_infrastructure
+      - rebalance_portfolio
+      - extract_statistics
+
+    - title: Plotting
+      contents:
+      - autoplot.snoop_statistics
+
+    - title: Other
+      contents:
+      - applicable_solvers
+      - construct_optimization
+      - find_optimum
+
 

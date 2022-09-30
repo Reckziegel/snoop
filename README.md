@@ -8,6 +8,7 @@
 [![R-CMD-check](https://github.com/Reckziegel/snoop/workflows/R-CMD-check/badge.svg)](https://github.com/Reckziegel/snoop/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
 
 > A package for backtesting and data`snoop`ing.
@@ -24,8 +25,8 @@ devtools::install_github("Reckziegel/snoop")
 
 ## Workflow
 
-`snoop` aims to automate routines for portfolio construction purposes
-inside the `tiyverse`.
+`snoop` aims to automate routines for portfolio backtesting purposes
+inside the `tidyverse`.
 
 The current workflow is the following:
 
@@ -34,11 +35,13 @@ The current workflow is the following:
     `construct_rebalance_infrastructure()`
 3.  Rebalance with `rebalance_portfolio()`
 4.  Compute the main statistics with `extract_statistics()`
+5.  See the results with the `autoplot()` method.
 
 ## Toy Example
 
 ``` r
 library(snoop)
+library(ggplot2)
 
 # Step 0: Get the data
 stocks <- tibble::tibble(
@@ -85,45 +88,52 @@ rebal # information is under the hood
 #> # ... with 40 more rows
 
 # Step 3: Rebalance Portfolio
-mu_sigma <- function(.data) {
-  # Mean Variance Strategy
-  list(mu = colMeans(.data), sigma = stats::cov(.data)) 
-}
+compute_cov <- function(.data) stats::cov(as.matrix(.data))
 
-# Step 4: Compute the main statistics
-optimal <- rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
+optimal <- rebalance_portfolio(
+  .data     = rebal, 
+  .fn       = compute_cov, 
+  .strategy = "risk_parity"
+)
 optimal
-#> # A tibble: 50 x 4
-#>    .date      .analysis         .assessment      .optimization   
-#>    <date>     <list>            <list>           <list>          
-#>  1 2009-02-20 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  2 2009-02-21 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  3 2009-02-22 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  4 2009-02-23 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  5 2009-02-24 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  6 2009-02-25 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  7 2009-02-26 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  8 2009-02-27 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#>  9 2009-02-28 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
-#> 10 2009-03-01 <tibble [50 x 3]> <tibble [1 x 3]> <named list [6]>
+#> # A tibble: 50 x 5
+#>    .date      .analysis         .assessment      .optimization .weights 
+#>    <date>     <list>            <list>           <list>        <list>   
+#>  1 2009-02-20 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  2 2009-02-21 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  3 2009-02-22 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  4 2009-02-23 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  5 2009-02-24 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  6 2009-02-25 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  7 2009-02-26 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  8 2009-02-27 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#>  9 2009-02-28 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
+#> 10 2009-03-01 <tibble [50 x 3]> <tibble [1 x 3]> <nlmnb_sl>    <dbl [3]>
 #> # ... with 40 more rows
 
 # Step 4: Compute Statistics
 metrics <- extract_statistics(optimal)
 metrics
-#> # A tibble: 50 x 11
-#>    .date      .analysis .assessment .optimization .weights  .return .volatility
-#>    <date>     <list>    <list>      <list>        <list>      <dbl>       <dbl>
-#>  1 2009-02-20 <tibble>  <tibble>    <named list>  <dbl [3]> -0.969        0.861
-#>  2 2009-02-21 <tibble>  <tibble>    <named list>  <dbl [3]> -0.843        0.852
-#>  3 2009-02-22 <tibble>  <tibble>    <named list>  <dbl [3]> -0.146        0.858
-#>  4 2009-02-23 <tibble>  <tibble>    <named list>  <dbl [3]>  0.284        0.857
-#>  5 2009-02-24 <tibble>  <tibble>    <named list>  <dbl [3]> -0.713        0.852
-#>  6 2009-02-25 <tibble>  <tibble>    <named list>  <dbl [3]>  0.617        0.837
-#>  7 2009-02-26 <tibble>  <tibble>    <named list>  <dbl [3]> -0.387        0.813
-#>  8 2009-02-27 <tibble>  <tibble>    <named list>  <dbl [3]>  0.393        0.798
-#>  9 2009-02-28 <tibble>  <tibble>    <named list>  <dbl [3]>  0.0109       0.786
-#> 10 2009-03-01 <tibble>  <tibble>    <named list>  <dbl [3]>  1.96         0.785
-#> # ... with 40 more rows, and 4 more variables: .skewness <dbl>,
-#> #   .kurtosis <dbl>, .value_at_risk <dbl>, .expected_shortfall <dbl>
+#> # A tibble: 50 x 13
+#>    .date      .analysis .assessment .optimizat~1 .weig~2 .retu~3 .retu~4 .vola~5
+#>    <date>     <list>    <list>      <list>       <list>    <dbl>   <dbl>   <dbl>
+#>  1 2009-02-20 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.0412  0.0412   0.707
+#>  2 2009-02-21 <tibble>  <tibble>    <nlmnb_sl>   <dbl>   -0.563  -0.563    0.701
+#>  3 2009-02-22 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.637   0.637    0.705
+#>  4 2009-02-23 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.0404  0.0404   0.711
+#>  5 2009-02-24 <tibble>  <tibble>    <nlmnb_sl>   <dbl>   -0.112  -0.112    0.695
+#>  6 2009-02-25 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.745   0.745    0.693
+#>  7 2009-02-26 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.717   0.717    0.707
+#>  8 2009-02-27 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    1.94    1.94     0.713
+#>  9 2009-02-28 <tibble>  <tibble>    <nlmnb_sl>   <dbl>   -0.512  -0.512    0.761
+#> 10 2009-03-01 <tibble>  <tibble>    <nlmnb_sl>   <dbl>    0.0363  0.0363   0.763
+#> # ... with 40 more rows, 5 more variables: .skewness <dbl>, .kurtosis <dbl>,
+#> #   .value_at_risk <dbl>, .expected_shortfall <dbl>, .ena <dbl>, and
+#> #   abbreviated variable names 1: .optimization, 2: .weights, 3: .return_gross,
+#> #   4: .return_net, 5: .volatility
+
+# Step 5: See the results
+autoplot(metrics)
 ```
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />

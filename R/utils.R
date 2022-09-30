@@ -19,6 +19,9 @@ is_quadratic <- function(x) {
 }
 
 #' @keywords internal
+tbl_to_mtx <- function(x) as.matrix(dplyr::select(x, where(is.numeric)))
+
+#' @keywords internal
 get_index_col <- function(.data) {
   index_col <- purrr::map_lgl(.x = .data, .f = lubridate::is.Date)
   if (is.null(index_col)) {

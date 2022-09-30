@@ -8,7 +8,12 @@ rebalance_portfolio(
   .data,
   .fn,
   ...,
-  .strategy = c("risk_parity", "mean_variance")
+  .strategy,
+  .constraint = NULL,
+  .bound = NULL,
+  .solver = NULL,
+  .control = NULL,
+  .lambda = NULL
 )
 }
 \arguments{
@@ -20,6 +25,16 @@ rebalance_portfolio(
 
 \item{.strategy}{A \code{character} with the optimization technique to be implemented.
 Currently one of: \code{risk_parity} or \code{mean_variance}.}
+
+\item{.constraint}{doc latter}
+
+\item{.bound}{doc latter}
+
+\item{.solver}{doc latter}
+
+\item{.control}{doc latter}
+
+\item{.lambda}{doc latter}
 }
 \value{
 A \code{tibble}.
@@ -37,17 +52,17 @@ stocks <- tibble::tibble(
 
 roll <- construct_rolling_infrastructure(stocks, .initial = 50)
 
-rebal <- construct_rebalance_infrastructure(roll)
+rebal <- construct_rebalance_infrastructure(roll, .by = "week")
 
 # Mean Variance Strategy
-mu_sigma <- function(.data) {
-  list(mu = colMeans(.data), sigma = stats::cov(.data))
-}
+#mu_sigma <- function(.data) {
+#  list(mu = colMeans(.data), sigma = stats::cov(.data))
+#}
 
-rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
+#rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
 
 # Risk Parity Strategy
-#compute_cov <- function(.data) stats::cov(as.matrix(.data))
+compute_cov <- function(.data) stats::cov(as.matrix(.data))
 
-#rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
+rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
 }

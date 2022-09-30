@@ -29,7 +29,7 @@ construct_rolling_infrastructure <- function(.data, .initial = 252, .assess = 1,
 
   if (purrr::is_empty(get_index_char(.data))) {
     rlang::abort(
-      message = "At least one column from the `.data` object must contain dates."
+      message = "At least one column from `.data` must contain dates."
     )
   }
 

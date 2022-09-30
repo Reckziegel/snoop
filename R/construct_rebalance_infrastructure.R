@@ -33,9 +33,7 @@ construct_rebalance_infrastructure <- function(.data, .by = c("day", "week", "mo
   .index_char <- get_index_char(.data)
 
   if (purrr::is_empty(.index_char)) {
-    rlang::abort(
-      message = "At least one column from the `.data` object must contain dates."
-    )
+    rlang::abort(message = "At least one column from `.data` must contain dates.")
   }
 
   att <- .data |>
@@ -49,6 +47,8 @@ construct_rebalance_infrastructure <- function(.data, .by = c("day", "week", "mo
 
   att$.flag[[1]] <- FALSE
 
-  tibble::new_tibble(x = .data, nrow = nrow(.data), class = "snoop_rebalance", anexo = att)
+  n_col <- ncol(.data$.analysis[[1]])
+
+  tibble::new_tibble(x = .data, nrow = nrow(.data), class = "snoop_rebalance", anexo = att, n_col = n_col)
 
 }

@@ -4,14 +4,17 @@
 \alias{extract_statistics}
 \title{Portfolio Statistics}
 \usage{
-extract_statistics(.data)
+extract_statistics(.data, .cost = 0)
 }
 \arguments{
 \item{.data}{A \code{tibble} from the \code{snoop_rolling}.}
+
+\item{.cost}{A code{double} with the fixed cost per period of time.}
 }
 \value{
-A \code{tibble} with 7 new columns: \code{.weights}, \code{.return} and \code{.volatility},
-\code{.skewness} and \code{.kurtosis}, \code{.value_at_risk} and \code{.expected_shortfall}.
+A \code{tibble} with 8 new columns: \code{.weights}, \code{.return} and \code{.volatility},
+\code{.skewness} and \code{.kurtosis}, \code{.value_at_risk}, \code{.expected_shortfall} and
+\code{.ena}.
 }
 \description{
 Computes the portfolio statistics for each period being considered.
@@ -33,7 +36,10 @@ mu_sigma <- function(.data) {
   list(mu = colMeans(.data), sigma = stats::cov(.data))
 }
 
-optimal <- rebalance_portfolio(rebal, mu_sigma, .strategy = "mean_variance")
+compute_cov <- function(.data) stats::cov(as.matrix(.data))
+
+optimal <- rebalance_portfolio(rebal, compute_cov, .strategy = "risk_parity")
+optimal
 
 extract_statistics(optimal)
 }
